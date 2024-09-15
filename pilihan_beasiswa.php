@@ -19,6 +19,7 @@ require 'navbar.php';
     <div class="row mt-4">
         <div class="col-md-6">
             <div class="card">
+            <img src="img/akademik.jpeg" />
                 <div class="card-body">
                     <h5 class="card-title">Beasiswa Akademik</h5>
                     <p class="card-text">Beasiswa ini diberikan kepada mahasiswa dengan prestasi akademik terbaik.</p>
@@ -35,6 +36,7 @@ require 'navbar.php';
         </div>
         <div class="col-md-6">
             <div class="card">
+            <img src="img/nonAkademik.jpeg" />
                 <div class="card-body">
                     <h5 class="card-title">Beasiswa Non-Akademik</h5>
                     <p class="card-text">Beasiswa ini diberikan kepada mahasiswa dengan prestasi non-akademik, seperti olahraga atau seni.</p>
