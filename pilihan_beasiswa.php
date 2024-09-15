@@ -15,13 +15,20 @@ require 'navbar.php';
 <body>
  
 <div class="container mt-5">
-    <h2 class="text-center">Pilih Jenis Beasiswa</h2>
+    <h1 class="text-center pt-4">Pilih Jenis Beasiswa</h1>
     <div class="row mt-4">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Beasiswa Akademik</h5>
                     <p class="card-text">Beasiswa ini diberikan kepada mahasiswa dengan prestasi akademik terbaik.</p>
+                    <h6 class="card-subtitle mb-2">Syarat:</h6>
+                    <ul class="list-unstyled">
+                        <li>IPK minimal 3.0</li>
+                        <li>Memiliki prestasi akademik yang luar biasa</li>
+                        <li>Aktif dalam kegiatan kampus</li>
+                        <li>Melampirkan surat rekomendasi dari dosen</li>
+                    </ul>
                     <a href="form_pendaftaran.php?jenis=akademik" class="btn btn-success">Beasiswa Akademik</a>
                 </div>
             </div>
@@ -31,6 +38,13 @@ require 'navbar.php';
                 <div class="card-body">
                     <h5 class="card-title">Beasiswa Non-Akademik</h5>
                     <p class="card-text">Beasiswa ini diberikan kepada mahasiswa dengan prestasi non-akademik, seperti olahraga atau seni.</p>
+                    <h6 class="card-subtitle mb-2">Syarat:</h6>
+                    <ul class="list-unstyled">
+                        <li>Memiliki prestasi luar biasa di bidang olahraga atau seni</li>
+                        <li>Menunjukkan bukti pencapaian atau sertifikat terkait</li>
+                        <li>Aktif dalam kegiatan ekstrakurikuler</li>
+                        <li>Melampirkan surat rekomendasi dari pelatih atau pembina</li>
+                    </ul>
                     <a href="form_pendaftaran.php?jenis=non-akademik" class="btn btn-success">Beasiswa Non-Akademik</a>
                 </div>
             </div>

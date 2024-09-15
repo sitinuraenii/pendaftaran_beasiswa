@@ -2,6 +2,7 @@
 define('IPK', 3.4);  
 
 require 'function.php';
+require 'navbar.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Direktori tujuan untuk menyimpan file yang diunggah
@@ -80,8 +81,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body onload="checkIPK()">
 
-<h1 class="mb-4 pt-4 text-center">Daftar Beasiswa</h1>
-    <div class="container mt-5">
+<h1 class="mb-4 pt-4 mt-5 text-center">Daftar Beasiswa</h1>
+    <div class="container mt-3">
         <div class="card">
             <div class="card-header">
                 Registrasi Beasiswa
