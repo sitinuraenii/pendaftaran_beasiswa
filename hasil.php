@@ -1,7 +1,7 @@
 <?php
 require 'function.php';
 require 'navbar.php';
-$nama = isset($_GET['nama']) ? $_GET['nama'] : '';
+$nama = isset($_GET['nama']) ? $_GET['nama'] : '';//cek parameter nama ada di url, apabila ada maka disimpan di variabel $nama apabila tidak disimpan di string kosong
 $email = isset($_GET['email']) ? $_GET['email'] : '';
 $phone = isset($_GET['phone']) ? $_GET['phone'] : '';
 $semester = isset($_GET['semester']) ? $_GET['semester'] : '';

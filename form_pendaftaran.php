@@ -1,50 +1,71 @@
 <?php
-define('IPK', 3.4);  
-
 require 'function.php';
 require 'navbar.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Direktori tujuan untuk menyimpan file yang diunggah
-    $target_dir = "uploads/";  
+    // Ambil nilai IPK dari form
+    $ipk = floatval($_POST['ipk']); // Konversi ke float
 
-    // Ambil informasi file yang diunggah
-    $berkas = $_FILES['berkas']['name'];
-    $target_file = $target_dir . basename($berkas); // Gabungkan nama file dengan direktori tujuan
-
-    // Ekstensi yang diizinkan
-    $allowed_extensions = array('pdf', 'jpg', 'zip');
-    $file_extension = pathinfo($target_file, PATHINFO_EXTENSION);
-
-    // Cek apakah file memiliki ekstensi yang diizinkan
-    if (!in_array(strtolower($file_extension), $allowed_extensions)) {
-        echo "Format file tidak diizinkan. Hanya file .pdf, .jpg, atau .zip yang diizinkan.";
+    if ($ipk < 3) {
+        echo "IPK Anda kurang dari 3. Anda tidak memenuhi syarat untuk mendaftar beasiswa.";
     } else {
-        // Pindahkan file yang diunggah ke direktori tujuan
-        if (move_uploaded_file($_FILES['berkas']['tmp_name'], $target_file)) {
-            echo "Berkas berhasil diunggah.";
-
-            // Data lain dari form
-            $data = [
-                'nama' => $_POST['nama'],
-                'email' => $_POST['email'],
-                'phone' => $_POST['phone'],
-                'semester' => $_POST['semester'],
-                'ipk' => IPK, 
-                'beasiswa' => $_POST['beasiswa'],
-                'status' => 'Belum diverifikasi',
-                'berkas' => $target_file  // Simpan path file di database
-            ];
-
-            // Simpan data ke database
-            if (tambah($data) > 0) {
-                header("Location: hasil.php");
-                exit();
-            } else {
-                echo "Gagal menyimpan data.";
-            }
+        // Validasi email
+        $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+        if (!$email) {
+            echo "Format email tidak valid.";
         } else {
-            echo "Maaf, terjadi kesalahan saat mengunggah file.";
+            // Direktori tujuan untuk menyimpan file yang diunggah
+            $target_dir = "uploads/";
+
+            // Ambil informasi file yang diunggah
+            $berkas = $_FILES['berkas']['name'];
+
+            // Pastikan file telah dipilih
+            if ($berkas) {
+                $target_file = $target_dir . basename($berkas); // Gabungkan nama file dengan direktori tujuan
+
+                // Ekstensi yang diizinkan
+                $allowed_extensions = array('pdf', 'jpg', 'zip');
+                $file_extension = pathinfo($target_file, PATHINFO_EXTENSION);
+
+                // Cek apakah file memiliki ekstensi yang diizinkan
+                if (!in_array(strtolower($file_extension), $allowed_extensions)) {
+                    echo "Format file tidak diizinkan. Hanya file .pdf, .jpg, atau .zip yang diizinkan.";
+                } else {
+                    // Cek apakah folder tujuan ada dan bisa diakses
+                    if (is_dir($target_dir) && is_writable($target_dir)) {
+                        // Pindahkan file yang diunggah ke direktori tujuan
+                        if (move_uploaded_file($_FILES['berkas']['tmp_name'], $target_file)) {
+                            echo "Berkas berhasil diunggah.";
+                            
+                            $data = [
+                                'nama' => $_POST['nama'],
+                                'email' => $email,
+                                'phone' => $_POST['phone'],
+                                'semester' => $_POST['semester'],
+                                'ipk' => $ipk,
+                                'beasiswa' => $_POST['beasiswa'],
+                                'status' => 'Belum diverifikasi',
+                                'berkas' => $target_file  // Simpan path file di database
+                            ];
+
+                            // Simpan data ke database
+                            if (tambah($data) > 0) {
+                                header("Location: hasil.php");
+                                exit();
+                            } else {
+                                echo "Gagal menyimpan data.";
+                            }
+                        } else {
+                            echo "Maaf, terjadi kesalahan saat mengunggah file.";
+                        }
+                    } else {
+                        echo "Direktori tujuan tidak ada atau tidak bisa ditulisi.";
+                    }
+                }
+            } else {
+                echo "Silakan pilih file untuk diunggah.";
+            }
         }
     }
 }
@@ -59,12 +80,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
     <link rel="stylesheet" href="style.css" />
     <script>
-        // Fungsi untuk menonaktifkan elemen jika IPK di bawah 3
-        function checkIPK() {
+       function checkIPK() {
             const ipk = parseFloat(document.getElementById('ipk').value);
             const beasiswa = document.getElementById('beasiswa');
             const berkas = document.getElementById('berkas');
-            const simpan = document.getElementById('simpan');
+            const simpan = document.getElementById('simpan');//mendapatkan elemnt html dengan id
 
             if (ipk < 3) {
                 beasiswa.disabled = true;
@@ -74,9 +94,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 beasiswa.disabled = false;
                 berkas.disabled = false;
                 simpan.disabled = false;
-                document.getElementById('beasiswa').focus(); // Fokus ke pilihan beasiswa
+                beasiswa.focus();
             }
         }
+
+        // Fungsi untuk memvalidasi email
+        function validateEmail() {
+            const emailInput = document.getElementById('email');
+            const emailError = document.getElementById('email-error');
+            const email = emailInput.value;
+
+            if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                emailError.textContent = "Format email tidak valid.";
+                emailInput.classList.add('is-invalid');
+            } else {
+                emailError.textContent = "";
+                emailInput.classList.remove('is-invalid');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const emailInput = document.getElementById('email');
+            emailInput.addEventListener('blur', () => {
+                validateEmail();
+            });
+        });
+   
     </script>
 </head>
 <body onload="checkIPK()">
@@ -100,7 +143,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="mb-3 row">
                         <label for="email" class="col-sm-4 col-form-label">Email</label>
                         <div class="col-sm-8">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Masukkan email" required />
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Masukkan email" required oninput="validateEmail()" />
+                            <div id="email-error" class="text-danger"></div>
                         </div>
                     </div>
 
@@ -126,7 +170,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="mb-3 row">
                         <label for="ipk" class="col-sm-4 col-form-label">IPK Terakhir</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="ipk" name="ipk" value="<?php echo IPK; ?>" readonly>
+                            <input type="number" step="0.01" class="form-control" id="ipk" name="ipk" placeholder="Masukkan IPK" required onchange="checkIPK()">
                         </div>
                     </div>
 

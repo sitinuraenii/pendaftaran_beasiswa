@@ -7,11 +7,16 @@ $db = "beasiswa";
 
 $koneksi = new mysqli($host, $user, $pass, $db);
 
-function query($query){
+// Periksa koneksi
+if ($koneksi->connect_error) {
+    die("Koneksi gagal: " . $koneksi->connect_error);
+}
+
+function query($query) {
     global $koneksi;
     $result = mysqli_query($koneksi, $query);
     $rows = [];
-    while($row = mysqli_fetch_assoc($result)){
+    while ($row = mysqli_fetch_assoc($result)) {
         $rows[] = $row;
     }
     return $rows;
@@ -27,11 +32,14 @@ function tambah($data) {
     $beasiswa = htmlspecialchars($data['beasiswa']);
     $status = htmlspecialchars($data['status']);
     $berkas = htmlspecialchars($data['berkas']);
-    $query = "INSERT INTO pendaftar (nama, email, phone, semester, ipk, beasiswa, status, berkas) VALUES ('$nama', '$email', '$phone', '$semester', '$ipk', '$beasiswa', '$status','$berkas' )";
-    mysqli_query($koneksi, $query);
+    $query = "INSERT INTO pendaftar (nama, email, phone, semester, ipk, beasiswa, status, berkas) VALUES ('$nama', '$email', '$phone', '$semester', '$ipk', '$beasiswa', '$status', '$berkas')";
 
-    return mysqli_affected_rows($koneksi);
+    if (mysqli_query($koneksi, $query)) {
+        return mysqli_affected_rows($koneksi);
+    } else {
+        echo "Error: " . mysqli_error($koneksi);
+        return 0;
+    }
 }
 
-
-
+?>
